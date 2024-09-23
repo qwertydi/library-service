@@ -16,6 +16,7 @@
 
   <modules>
     <module>library-service-api</module>
+    <module>openlibrary-api-sdk</module>
   </modules>
 
   <properties>
