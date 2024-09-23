@@ -1,5 +1,6 @@
 package com.dmsc.sboot.autoconfigure.openlibraryapi.sdk;
 
+import com.dmsc.openlibraryapi.configuration.CustomRestClientErrorHandler;
 import com.dmsc.openlibraryapi.sdk.RestClientSearchApiSdk;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -46,7 +47,7 @@ public class OpenLibraryApiSdkAutoConfiguration {
         RestClient.Builder restClientBuilder = RestClient.builder()
             .requestFactory(factory)
             .baseUrl(ryanairServiceProperties.getBaseUrl())
-            .build();
+            .defaultStatusHandler(new CustomRestClientErrorHandler());
 
         return new RestClientSearchApiSdk(restClientBuilder);
     }

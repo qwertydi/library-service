@@ -1,6 +1,7 @@
 package com.dmsc.openlibraryapi.sdk;
 
 import com.dmsc.openlibraryapi.configuration.CustomRestClientErrorHandler;
+import com.dmsc.openlibraryapi.exception.OpenLibraryServerSdkException;
 import com.dmsc.openlibraryapi.model.SearchSdkRequest;
 import com.dmsc.openlibraryapi.model.SearchSdkResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,9 +13,11 @@ import org.springframework.web.client.RestClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 class RestClientSearchApiSdkTest {
@@ -2351,6 +2354,25 @@ class RestClientSearchApiSdkTest {
         assertNotNull(searchSdkResponse);
         assertEquals(0, searchSdkResponse.getNumFound2());
         assertEquals(0, searchSdkResponse.getDocs().size());
+
+        mockRestServiceServer.verify();
+    }
+
+    @Test
+    void searchBooksWithServerError() {
+        /* Preparation */
+        SearchSdkRequest request = SearchSdkRequest.builder().title("the lord of the rings").build();
+
+        mockRestServiceServer.expect(requestTo("search.json?title=the+lord+of+the+rings"))
+            .andExpect(method(HttpMethod.GET))
+            .andExpect(queryParam("title", "the+lord+of+the+rings"))
+            .andRespond(withServerError());
+
+        /* Execution */
+        OpenLibraryServerSdkException openLibraryServerSdkException = assertThrows(OpenLibraryServerSdkException.class, () -> classUnderTest.searchBooks(request));
+
+        /* Verification */
+        assertNotNull(openLibraryServerSdkException);
 
         mockRestServiceServer.verify();
     }
