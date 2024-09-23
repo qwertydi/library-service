@@ -2338,6 +2338,20 @@ class RestClientSearchApiSdkTest {
     }
 
     @Test
+    void searchBooksByCustomTitle() {
+        /* Preparation */
+        SearchSdkRequest request = SearchSdkRequest.builder().build();
+
+        /* Execution */
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> classUnderTest.searchBooks(request));
+
+        /* Verification */
+        assertNotNull(illegalArgumentException);
+
+        mockRestServiceServer.verify();
+    }
+
+    @Test
     void searchBooksByTitleInvalidResponse() {
         /* Preparation */
         SearchSdkRequest request = SearchSdkRequest.builder().title("the lord of the rings").build();
