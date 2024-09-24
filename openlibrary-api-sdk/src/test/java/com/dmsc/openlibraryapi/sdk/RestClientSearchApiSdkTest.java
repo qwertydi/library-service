@@ -2,8 +2,8 @@ package com.dmsc.openlibraryapi.sdk;
 
 import com.dmsc.openlibraryapi.configuration.CustomRestClientErrorHandler;
 import com.dmsc.openlibraryapi.exception.OpenLibraryServerSdkException;
-import com.dmsc.openlibraryapi.model.SearchSdkRequest;
 import com.dmsc.openlibraryapi.model.SearchSdkResponse;
+import com.dmsc.openlibraryapi.model.SearchTitleSdkRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
@@ -2319,7 +2319,7 @@ class RestClientSearchApiSdkTest {
     @Test
     void searchBooksByTitle() {
         /* Preparation */
-        SearchSdkRequest request = SearchSdkRequest.builder().title("the lord of the rings").build();
+        SearchTitleSdkRequest request = SearchTitleSdkRequest.builder().title("the lord of the rings").build();
 
         mockRestServiceServer.expect(requestTo("search.json?title=the+lord+of+the+rings"))
             .andExpect(method(HttpMethod.GET))
@@ -2340,13 +2340,13 @@ class RestClientSearchApiSdkTest {
     @Test
     void searchBooksByCustomTitle() {
         /* Preparation */
-        SearchSdkRequest request = SearchSdkRequest.builder().build();
+        SearchTitleSdkRequest request = SearchTitleSdkRequest.builder().title("title").build();
 
         /* Execution */
-        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> classUnderTest.searchBooks(request));
+        AssertionError assertionError = assertThrows(AssertionError.class, () -> classUnderTest.searchBooks(request));
 
         /* Verification */
-        assertNotNull(illegalArgumentException);
+        assertNotNull(assertionError);
 
         mockRestServiceServer.verify();
     }
@@ -2354,7 +2354,7 @@ class RestClientSearchApiSdkTest {
     @Test
     void searchBooksByTitleInvalidResponse() {
         /* Preparation */
-        SearchSdkRequest request = SearchSdkRequest.builder().title("the lord of the rings").build();
+        SearchTitleSdkRequest request = SearchTitleSdkRequest.builder().title("the lord of the rings").build();
 
         mockRestServiceServer.expect(requestTo("search.json?title=the+lord+of+the+rings"))
             .andExpect(method(HttpMethod.GET))
@@ -2375,7 +2375,7 @@ class RestClientSearchApiSdkTest {
     @Test
     void searchBooksWithServerError() {
         /* Preparation */
-        SearchSdkRequest request = SearchSdkRequest.builder().title("the lord of the rings").build();
+        SearchTitleSdkRequest request = SearchTitleSdkRequest.builder().title("the lord of the rings").build();
 
         mockRestServiceServer.expect(requestTo("search.json?title=the+lord+of+the+rings"))
             .andExpect(method(HttpMethod.GET))
