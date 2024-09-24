@@ -15,7 +15,7 @@ public class BookSdk {
     private List<String> authorName;
 
     @JsonProperty("first_publish_year")
-    private int firstPublishYear;
+    private Integer firstPublishYear;
 
     @JsonProperty("key")
     private String key;
