@@ -1,13 +1,12 @@
 package com.dmsc.openlibraryapi.model;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
-@Builder
 @Data
-public class SearchSdkRequest {
-    private @NotNull String title;
+@SuperBuilder
+public abstract class SearchSdkRequest {
     private Integer offset;
     private Integer page;
+    private Integer limit;
 }

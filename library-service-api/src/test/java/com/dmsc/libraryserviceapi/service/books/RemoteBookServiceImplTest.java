@@ -4,6 +4,7 @@ import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.openlibraryapi.model.BookSdk;
 import com.dmsc.openlibraryapi.model.SearchSdkRequest;
 import com.dmsc.openlibraryapi.model.SearchSdkResponse;
+import com.dmsc.openlibraryapi.model.SearchTitleSdkRequest;
 import com.dmsc.openlibraryapi.sdk.SearchApiSdk;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -41,12 +42,16 @@ class RemoteBookServiceImplTest {
         @Test
         void testResults() {
             /* Preparation */
-            SearchSdkRequest request = SearchSdkRequest.builder()
+            SearchSdkRequest request = SearchTitleSdkRequest.builder()
                 .title("title")
                 .build();
 
             BookSdk bookSdk = new BookSdk();
             bookSdk.setTitle("title");
+            bookSdk.setLanguage(Collections.singletonList("en"));
+            bookSdk.setAuthorName(Collections.singletonList("J. K. Rowling"));
+            bookSdk.setFirstPublishYear(1996);
+
             SearchSdkResponse sdkResponse = new SearchSdkResponse();
             sdkResponse.setDocs(Collections.singletonList(bookSdk));
 
@@ -58,14 +63,18 @@ class RemoteBookServiceImplTest {
             /* Verification */
             assertNotNull(responses);
             assertEquals(1, responses.size());
-            assertEquals("title", responses.get(0).getTitle());
+            BookResponse bookResponse = responses.get(0);
+            assertEquals("title", bookResponse.getTitle());
+            assertEquals(List.of("J. K. Rowling"), bookResponse.getAuthors());
+            assertEquals(List.of("en"), bookResponse.getLanguages());
+            assertEquals(1996, bookResponse.getPublishYear());
             verify(mockSearchApiSdk).searchBooks(request);
         }
 
         @Test
         void testNoResults() {
             /* Preparation */
-            SearchSdkRequest request = SearchSdkRequest.builder()
+            SearchSdkRequest request = SearchTitleSdkRequest.builder()
                 .title("title")
                 .build();
 
