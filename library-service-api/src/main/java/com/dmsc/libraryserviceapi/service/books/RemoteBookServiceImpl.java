@@ -30,6 +30,7 @@ public class RemoteBookServiceImpl implements RemoteBookService {
             protected void configure() {
                 map().setAuthors(source.getAuthorName());
                 map().setLanguages(source.getLanguage());
+                map().setPublishYear(source.getFirstPublishYear());
             }
         };
         this.modelMapper.addMappings(bookSdkToBookResponse);
