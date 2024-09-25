@@ -58,8 +58,6 @@ public class LocalBookServiceImpl implements LocalBookService {
                 .build()
         );
 
-        // TODO: trigger notification
-
         return Optional.of(BookResponse.fromLocalBook(save));
     }
 
