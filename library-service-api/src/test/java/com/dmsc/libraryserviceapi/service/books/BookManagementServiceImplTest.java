@@ -1,18 +1,25 @@
 package com.dmsc.libraryserviceapi.service.books;
 
+import com.dmsc.libraryserviceapi.exception.LibraryInvalidDataException;
 import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.libraryserviceapi.model.book.BookSystemEnum;
+import com.dmsc.libraryserviceapi.model.book.CreateBookRequest;
 import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
+import com.dmsc.libraryserviceapi.service.notification.NotificationService;
 import com.dmsc.libraryserviceapi.util.IdGeneratorUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -26,13 +33,80 @@ class BookManagementServiceImplTest {
     private LocalBookService mockLocalBookService;
     private RemoteBookService mockRemoteBookService;
     private IdentifierHashService mockIdentifierHashService;
+    private NotificationService mockNotificationService;
+
+    private static CreateBookRequest getCreateBookRequest() {
+        CreateBookRequest createBookRequest = new CreateBookRequest();
+        createBookRequest.setAuthors(new ArrayList<>());
+        createBookRequest.setTitle("title");
+        createBookRequest.setPublishYear(String.valueOf(1996));
+        createBookRequest.setLanguages(Collections.singletonList("en"));
+        return createBookRequest;
+    }
+
+    private static BookResponse getBookResponse() {
+        return BookResponse.builder()
+            .title("title")
+            .authors(Collections.emptyList())
+            .languages(Collections.emptyList())
+            .publishYear(1996)
+            .id("1")
+            .build();
+    }
 
     @BeforeEach
     void beforeEach() {
         mockLocalBookService = mock(LocalBookService.class);
         mockRemoteBookService = mock(RemoteBookService.class);
         mockIdentifierHashService = mock(IdentifierHashService.class);
-        classUnderTest = new BookManagementServiceImpl(mockLocalBookService, mockRemoteBookService, mockIdentifierHashService);
+        mockNotificationService = mock(NotificationService.class);
+        classUnderTest = new BookManagementServiceImpl(mockLocalBookService, mockRemoteBookService, mockIdentifierHashService, mockNotificationService);
+    }
+
+    @Nested
+    class CreateBook {
+        @Test
+        void testSuccess() {
+            /* Preparation */
+            CreateBookRequest request = getCreateBookRequest();
+            BookResponse bookResponse = getBookResponse();
+
+            when(mockLocalBookService.addNewBook(request)).thenReturn(Optional.of(bookResponse));
+
+            /* Execution */
+            BookResponse book = classUnderTest.createBook(request);
+
+            /* Verification */
+            assertNotNull(book);
+
+            ArgumentCaptor<CreateBookRequest> argumentCaptor = ArgumentCaptor.forClass(CreateBookRequest.class);
+
+            verify(mockLocalBookService).addNewBook(argumentCaptor.capture());
+            CreateBookRequest value = argumentCaptor.getValue();
+            assertEquals("title", value.getTitle());
+            verify(mockNotificationService).sendEmailNotification(bookResponse);
+        }
+
+        @Test
+        void testError() {
+            /* Preparation */
+            CreateBookRequest request = getCreateBookRequest();
+
+            when(mockLocalBookService.addNewBook(request)).thenReturn(Optional.empty());
+
+            /* Execution */
+            LibraryInvalidDataException libraryInvalidDataException = assertThrows(LibraryInvalidDataException.class, () -> classUnderTest.createBook(request));
+
+            /* Verification */
+            assertNotNull(libraryInvalidDataException);
+
+            ArgumentCaptor<CreateBookRequest> argumentCaptor = ArgumentCaptor.forClass(CreateBookRequest.class);
+            verify(mockLocalBookService).addNewBook(argumentCaptor.capture());
+            CreateBookRequest value = argumentCaptor.getValue();
+            assertEquals("title", value.getTitle());
+
+            verifyNoInteractions(mockNotificationService);
+        }
     }
 
     @Test

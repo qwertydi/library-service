@@ -5,6 +5,7 @@ import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.libraryserviceapi.model.book.BookSystemEnum;
 import com.dmsc.libraryserviceapi.model.book.CreateBookRequest;
 import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
+import com.dmsc.libraryserviceapi.service.notification.NotificationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -20,10 +21,12 @@ public class BookManagementServiceImpl implements BookManagementService {
     private final RemoteBookService remoteBookService;
     private final IdentifierHashService identifierHashService;
     private final HashBookId hashBookId;
+    private final NotificationService notificationService;
 
     public BookManagementServiceImpl(LocalBookService localBookService,
                                      RemoteBookService remoteBookService,
-                                     IdentifierHashService identifierHashService) {
+                                     IdentifierHashService identifierHashService,
+                                     NotificationService notificationService) {
         this.localBookService = localBookService;
         this.remoteBookService = remoteBookService;
         this.identifierHashService = identifierHashService;
@@ -32,12 +35,17 @@ public class BookManagementServiceImpl implements BookManagementService {
             book.setId(hashedId);
             return book;
         };
+        this.notificationService = notificationService;
     }
 
     @Override
     public BookResponse createBook(CreateBookRequest request) {
-        return localBookService.addNewBook(request)
-            .orElse(null);
+        BookResponse bookResponse = localBookService.addNewBook(request)
+            .orElseThrow(() -> new LibraryInvalidDataException("Unable to create book", HttpStatus.BAD_REQUEST));
+
+        notificationService.sendEmailNotification(bookResponse);
+
+        return bookResponse;
     }
 
     /**
