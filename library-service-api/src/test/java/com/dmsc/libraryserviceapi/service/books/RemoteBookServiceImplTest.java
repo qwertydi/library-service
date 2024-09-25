@@ -26,13 +26,11 @@ class RemoteBookServiceImplTest {
 
     private RemoteBookService classUnderTest;
     private SearchApiSdk mockSearchApiSdk;
-    private IdentifierHashService mockIdentifierHashService;
 
     @BeforeEach
     void beforeEach() {
         mockSearchApiSdk = mock(SearchApiSdk.class);
-        mockIdentifierHashService = mock(IdentifierHashService.class);
-        classUnderTest = new RemoteBookServiceImpl(mockSearchApiSdk, mockIdentifierHashService);
+        classUnderTest = new RemoteBookServiceImpl(mockSearchApiSdk);
     }
 
     @Test
