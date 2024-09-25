@@ -1,0 +1,568 @@
+{
+	"info": {
+		"_postman_id": "d8d1f575-5856-438a-a55c-1de7fd564089",
+		"name": "library service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1711181"
+	},
+	"item": [
+		{
+			"name": "openlibrary-api",
+			"item": [
+				{
+					"name": "OpenLibrary Solr Test title",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://openlibrary.org/search.json?q=Harry Potter",
+							"protocol": "https",
+							"host": [
+								"openlibrary",
+								"org"
+							],
+							"path": [
+								"search.json"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "Harry Potter"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OpenLibrary Title Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://openlibrary.org/search.json?title=Harry Potter",
+							"protocol": "https",
+							"host": [
+								"openlibrary",
+								"org"
+							],
+							"path": [
+								"search.json"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "Harry Potter"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OpenLibrary Solr Test key",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://openlibrary.org/search.json?q=/works/OL29239229W",
+							"protocol": "https",
+							"host": [
+								"openlibrary",
+								"org"
+							],
+							"path": [
+								"search.json"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "/works/OL29239229W"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service - Create Book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"rapaz do pijama as riscas 1\",\n    \"authors\": [\n        \"John Boyne\"\n    ],\n    \"publishYear\": \"2006\",\n    \"languages\": [\n        \"pt\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/book",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"book"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Service - Create Book - Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"rapaz do pijama as riscas 1\",\n    \"authors\": [\n        \"John Boyne\"\n    ],\n    \"publishYear\": \"2006\",\n    \"languages\": [\n        \"pt\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"book"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 25 Sep 2024 13:22:23 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"q8KN3QB8G3t9PWd9KDdr-nIPK5S8jU8iH8crv7iNDcw=\",\n    \"title\": \"rapaz do pijama as riscas 1\",\n    \"authors\": [\n        \"John Boyne\"\n    ],\n    \"publishYear\": 2006,\n    \"languages\": [\n        \"pt\"\n    ]\n}"
+				},
+				{
+					"name": "Service - Create Book - Error",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"rapaz do pijama as riscas 1\",\n    \"authors\": [\n        \"John Boyne\"\n    ],\n    \"publishYear\": \"2006\",\n    \"languages\": [\n        \"pt\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"book"
+							]
+						}
+					},
+					"status": "Conflict",
+					"code": 409,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 25 Sep 2024 13:22:34 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Book already exists!\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Service - List All Books",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/book/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"book",
+						"all"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Service - List All Books",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/book/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"book",
+								"all"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 25 Sep 2024 13:22:56 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"q8KN3QB8G3t9PWd9KDdr+nIPK5S8jU8iH8crv7iNDcw=\",\n        \"title\": \"rapaz do pijama as riscas\",\n        \"authors\": [\n            \"ze cabra\"\n        ],\n        \"publishYear\": 1996,\n        \"languages\": [\n            \"pt\"\n        ]\n    },\n    {\n        \"id\": \"q8KN3QB8G3t9PWd9KDdr+s4PMc1gsacBS5t4q1pcgPA=\",\n        \"title\": \"rapaz do pijama as riscas 1\",\n        \"authors\": [\n            \"John Boyne\"\n        ],\n        \"publishYear\": 2006,\n        \"languages\": [\n            \"pt\"\n        ]\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Service - Find Books By ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"judas a cagar no deserto\",\n    \"authors\": [\n        \"ze cabra\"\n    ],\n    \"publishYear\": \"16-06-1996\",\n    \"languages\": [\n        \"ukranaiano\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/book/d8Wrar0oUYzoX9AVpBTOA3u0AkaZ3ot5tfdHwQHL3zl_gWIIVQ63v0vxfNUZVzLO",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"book",
+						"d8Wrar0oUYzoX9AVpBTOA3u0AkaZ3ot5tfdHwQHL3zl_gWIIVQ63v0vxfNUZVzLO"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Service - Find Book By Id Internal - Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/book/q8KN3QB8G3t9PWd9KDdr+nIPK5S8jU8iH8crv7iNDcw=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"book",
+								"q8KN3QB8G3t9PWd9KDdr+nIPK5S8jU8iH8crv7iNDcw="
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 25 Sep 2024 13:23:22 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"q8KN3QB8G3t9PWd9KDdr-nIPK5S8jU8iH8crv7iNDcw=\",\n    \"title\": \"rapaz do pijama as riscas\",\n    \"authors\": [\n        \"ze cabra\"\n    ],\n    \"publishYear\": 1996,\n    \"languages\": [\n        \"pt\"\n    ]\n}"
+				},
+				{
+					"name": "Service - Find Book By Id External - Success",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/book/d8Wrar0oUYzoX9AVpBTOA3u0AkaZ3ot5tfdHwQHL3zl_gWIIVQ63v0vxfNUZVzLO1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"book",
+								"d8Wrar0oUYzoX9AVpBTOA3u0AkaZ3ot5tfdHwQHL3zl_gWIIVQ63v0vxfNUZVzLO1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 25 Sep 2024 13:41:32 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"d8Wrar0oUYzoX9AVpBTOA3u0AkaZ3ot5tfdHwQHL3zl_gWIIVQ63v0vxfNUZVzLO\",\n    \"title\": \"O Rapaz Do Pijama as Riscas\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Find Books By Title",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/book/search?title=rapaz do pijama as riscas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"book",
+						"search"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "rapaz do pijama as riscas"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Find Books By Title",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/book/search?title=rapaz do pijama as riscas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"book",
+								"search"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "rapaz do pijama as riscas"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Wed, 25 Sep 2024 13:42:23 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"q8KN3QB8G3t9PWd9KDdr-nIPK5S8jU8iH8crv7iNDcw=\",\n        \"title\": \"rapaz do pijama as riscas\",\n        \"authors\": [\n            \"ze cabra\"\n        ],\n        \"publishYear\": 1996,\n        \"languages\": [\n            \"pt\"\n        ]\n    },\n    {\n        \"id\": \"d8Wrar0oUYzoX9AVpBTOA3u0AkaZ3ot5tfdHwQHL3zl_gWIIVQ63v0vxfNUZVzLO\",\n        \"title\": \"O Rapaz Do Pijama as Riscas\"\n    }\n]"
+				}
+			]
+		}
+	]
+}
