@@ -25,5 +25,5 @@ mvn clean package -Pdev
 Inside the docker the profile will be `prod`
 
 ### Testing
-Postman collection provided on file: [Postman Collection]()
+Postman collection provided on file: [Postman Collection](https://github.com/qwertydi/library-service/blob/main/libraryservice.postman_collection.json)
 By default the service is running on port `8080`
