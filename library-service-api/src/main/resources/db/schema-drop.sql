@@ -7,5 +7,7 @@ drop table if exists languages_entity cascade;
 drop table if exists local_book_entity cascade;
 drop table if exists local_book_entity_authors cascade;
 drop table if exists local_book_entity_languages cascade;
+drop table if exists user_entity cascade;
 drop sequence if exists author_entity_seq;
 drop sequence if exists languages_entity_seq;
+drop sequence if exists user_entity_seq;
