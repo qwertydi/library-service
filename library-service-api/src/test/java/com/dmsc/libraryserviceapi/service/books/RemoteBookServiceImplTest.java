@@ -1,6 +1,7 @@
 package com.dmsc.libraryserviceapi.service.books;
 
 import com.dmsc.libraryserviceapi.model.book.BookResponse;
+import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
 import com.dmsc.openlibraryapi.model.BookSdk;
 import com.dmsc.openlibraryapi.model.SearchSdkRequest;
 import com.dmsc.openlibraryapi.model.SearchSdkResponse;
@@ -25,11 +26,13 @@ class RemoteBookServiceImplTest {
 
     private RemoteBookService classUnderTest;
     private SearchApiSdk mockSearchApiSdk;
+    private IdentifierHashService mockIdentifierHashService;
 
     @BeforeEach
     void beforeEach() {
         mockSearchApiSdk = mock(SearchApiSdk.class);
-        classUnderTest = new RemoteBookServiceImpl(mockSearchApiSdk);
+        mockIdentifierHashService = mock(IdentifierHashService.class);
+        classUnderTest = new RemoteBookServiceImpl(mockSearchApiSdk, mockIdentifierHashService);
     }
 
     @Test

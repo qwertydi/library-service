@@ -2,7 +2,7 @@ package com.dmsc.libraryserviceapi.service.books;
 
 import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.libraryserviceapi.model.book.BookSystemEnum;
-import com.dmsc.libraryserviceapi.util.IdGeneratorUtil;
+import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
 import com.dmsc.openlibraryapi.model.BookSdk;
 import com.dmsc.openlibraryapi.model.SearchSdkRequest;
 import com.dmsc.openlibraryapi.model.SearchSdkResponse;
@@ -21,9 +21,12 @@ public class RemoteBookServiceImpl implements RemoteBookService {
 
     private final SearchApiSdk searchApiSdk;
     private final ModelMapper modelMapper;
+    private final IdentifierHashService identifierHashService;
 
-    public RemoteBookServiceImpl(SearchApiSdk searchApiSdk) {
+    public RemoteBookServiceImpl(SearchApiSdk searchApiSdk,
+                                 IdentifierHashService identifierHashService) {
         this.searchApiSdk = searchApiSdk;
+        this.identifierHashService = identifierHashService;
         this.modelMapper = new ModelMapper();
         PropertyMap<BookSdk, BookResponse> bookSdkToBookResponse = new PropertyMap<>() {
             @Override
@@ -65,7 +68,7 @@ public class RemoteBookServiceImpl implements RemoteBookService {
 
     private BookResponse getBookResponse(BookSdk bookSdk) {
         BookResponse bookResponse = modelMapper.map(bookSdk, BookResponse.class);
-        bookResponse.setId(IdGeneratorUtil.build(BookSystemEnum.OPENLIBRARY, bookSdk.getKey()));
+        bookResponse.setId(identifierHashService.hash(BookSystemEnum.OPENLIBRARY, bookSdk.getKey()));
         return bookResponse;
     }
 }

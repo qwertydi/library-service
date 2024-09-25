@@ -4,8 +4,6 @@ import com.dmsc.libraryserviceapi.model.book.BookSystemEnum;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Optional;
 
 /**
@@ -15,7 +13,6 @@ import java.util.Optional;
  * <ul>
  *     NOTE:
  *     <li>The format of the bookIdentifier: "book?id={originalId}&system={system}".</li>
- *     <li>The returned bookIdentifier is always encoded with Base64.</li>
  * </ul>
  */
 public final class IdGeneratorUtil {
@@ -29,7 +26,7 @@ public final class IdGeneratorUtil {
     }
 
     public static String build(BookSystemEnum bookSystemEnum, String id) {
-        String bookIdentifier = START_KEY +
+        return START_KEY +
             "system" +
             QUERY_PARAM_DELIMITER_KEY_VALUE +
             bookSystemEnum +
@@ -37,14 +34,12 @@ public final class IdGeneratorUtil {
             "id" +
             QUERY_PARAM_DELIMITER_KEY_VALUE +
             id;
-
-        return Base64.getUrlEncoder().encodeToString(bookIdentifier.getBytes(StandardCharsets.UTF_8));
     }
 
     public static Optional<MultiValueMap<String, String>> getDetailsFromBookId(String internalBookId) {
         // Spring's UriComponentsBuilder can parse our URI's query parameters if we remove the prefix "book".
         // For example: it can parse "?system=LOCAL&id=123913" (notice the '?' at the beginning).
-        return Optional.of(new String(Base64.getDecoder().decode(internalBookId), StandardCharsets.UTF_8))
+        return Optional.of(internalBookId)
             .filter(s -> s.startsWith(START_KEY))
             .map(s -> UriComponentsBuilder.fromUriString(s.substring(START_KEY.length() - 1)).build()
                 .getQueryParams());

@@ -2,6 +2,7 @@ package com.dmsc.libraryserviceapi.service.books;
 
 import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.libraryserviceapi.model.book.BookSystemEnum;
+import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
 import com.dmsc.libraryserviceapi.util.IdGeneratorUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -24,12 +25,14 @@ class BookManagementServiceImplTest {
 
     private LocalBookService mockLocalBookService;
     private RemoteBookService mockRemoteBookService;
+    private IdentifierHashService mockIdentifierHashService;
 
     @BeforeEach
     void beforeEach() {
         mockLocalBookService = mock(LocalBookService.class);
         mockRemoteBookService = mock(RemoteBookService.class);
-        classUnderTest = new BookManagementServiceImpl(mockLocalBookService, mockRemoteBookService);
+        mockIdentifierHashService = mock(IdentifierHashService.class);
+        classUnderTest = new BookManagementServiceImpl(mockLocalBookService, mockRemoteBookService, mockIdentifierHashService);
     }
 
     @Test
@@ -76,6 +79,7 @@ class BookManagementServiceImplTest {
             /* Preparation */
             String id = IdGeneratorUtil.build(BookSystemEnum.LOCAL, "1");
 
+            when(mockIdentifierHashService.getDetailsFromHash(id)).thenReturn(IdGeneratorUtil.getDetailsFromBookId(id));
             when(mockLocalBookService.searchBookById("1"))
                 .thenReturn(Optional.of(BookResponse.builder().title("title").build()));
 
@@ -93,6 +97,7 @@ class BookManagementServiceImplTest {
         void testGetByRemoteId() {
             /* Preparation */
             String id = IdGeneratorUtil.build(BookSystemEnum.OPENLIBRARY, "1");
+            when(mockIdentifierHashService.getDetailsFromHash(id)).thenReturn(IdGeneratorUtil.getDetailsFromBookId(id));
 
             when(mockRemoteBookService.searchBookById("1"))
                 .thenReturn(Optional.of(BookResponse.builder().title("title").build()));

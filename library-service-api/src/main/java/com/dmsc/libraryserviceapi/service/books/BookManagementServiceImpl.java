@@ -4,7 +4,7 @@ import com.dmsc.libraryserviceapi.exception.LibraryInvalidDataException;
 import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.libraryserviceapi.model.book.BookSystemEnum;
 import com.dmsc.libraryserviceapi.model.book.CreateBookRequest;
-import com.dmsc.libraryserviceapi.util.IdGeneratorUtil;
+import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -18,10 +18,20 @@ public class BookManagementServiceImpl implements BookManagementService {
 
     private final LocalBookService localBookService;
     private final RemoteBookService remoteBookService;
+    private final IdentifierHashService identifierHashService;
+    private final HashBookId hashBookId;
 
-    public BookManagementServiceImpl(LocalBookService localBookService, RemoteBookService remoteBookService) {
+    public BookManagementServiceImpl(LocalBookService localBookService,
+                                     RemoteBookService remoteBookService,
+                                     IdentifierHashService identifierHashService) {
         this.localBookService = localBookService;
         this.remoteBookService = remoteBookService;
+        this.identifierHashService = identifierHashService;
+        this.hashBookId = (book, systemEnum) -> {
+            String hashedId = identifierHashService.hash(BookSystemEnum.LOCAL, book.getId());
+            book.setId(hashedId);
+            return book;
+        };
     }
 
     @Override
@@ -43,7 +53,7 @@ public class BookManagementServiceImpl implements BookManagementService {
 
     @Override
     public Optional<BookResponse> searchBookById(String id) {
-        MultiValueMap<String, String> detailsFromBookId = IdGeneratorUtil.getDetailsFromBookId(id)
+        MultiValueMap<String, String> detailsFromBookId = identifierHashService.getDetailsFromHash(id)
             .orElseThrow(() -> new IllegalAccessError(""));
 
         BookSystemEnum bookSystemEnum = BookSystemEnum.valueOf(detailsFromBookId.getFirst("system"));
@@ -51,10 +61,16 @@ public class BookManagementServiceImpl implements BookManagementService {
 
         switch (bookSystemEnum) {
             case LOCAL -> {
-                return localBookService.searchBookById(mappedId);
+                return localBookService.searchBookById(mappedId).map(x -> {
+                    x.setId(id);
+                    return x;
+                });
             }
             case OPENLIBRARY -> {
-                return remoteBookService.searchBookById(mappedId);
+                return remoteBookService.searchBookById(mappedId).map(x -> {
+                    x.setId(id);
+                    return x;
+                });
             }
             default -> throw new LibraryInvalidDataException("Third party not implemented", HttpStatus.NOT_IMPLEMENTED);
         }
@@ -62,13 +78,41 @@ public class BookManagementServiceImpl implements BookManagementService {
 
     @Override
     public List<BookResponse> searchBookByTitle(String title) {
-        List<BookResponse> localResponses = localBookService.searchBookByTitle(title);
-        List<BookResponse> remoteResponses = remoteBookService.searchBookByTitle(title);
+        List<BookResponse> localResponses = localBookService.searchBookByTitle(title)
+            .stream()
+            .map(book -> hashBookId.apply(book, BookSystemEnum.LOCAL))
+            .toList();
+        List<BookResponse> remoteResponses = remoteBookService.searchBookByTitle(title)
+            .stream()
+            .map(book -> hashBookId.apply(book, BookSystemEnum.OPENLIBRARY))
+            .toList();
 
         ArrayList<BookResponse> bookResponses = new ArrayList<>();
         bookResponses.addAll(localResponses);
         bookResponses.addAll(remoteResponses);
 
         return bookResponses;
+    }
+
+    /**
+     * A functional interface for hashing a book's ID.
+     * <p>
+     * This interface defines a method to apply a hashing function to a
+     * {@link BookResponse} object, given a specific {@link BookSystemEnum}.
+     * The result of the operation should be a modified or new instance of
+     * {@link BookResponse} with the hashed ID.
+     * </p>
+     */
+    @FunctionalInterface
+    public interface HashBookId {
+        /**
+         * Applies a hashing operation to the given book and system enum.
+         *
+         * @param book       the {@link BookResponse} object containing the book details
+         * @param systemEnum the {@link BookSystemEnum} that indicates the
+         *                   specific system context for hashing
+         * @return a {@link BookResponse} object with the hashed ID
+         */
+        BookResponse apply(BookResponse book, BookSystemEnum systemEnum);
     }
 }
