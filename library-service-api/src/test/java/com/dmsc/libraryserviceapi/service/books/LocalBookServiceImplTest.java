@@ -6,6 +6,7 @@ import com.dmsc.libraryserviceapi.model.book.BookResponse;
 import com.dmsc.libraryserviceapi.model.book.CreateBookRequest;
 import com.dmsc.libraryserviceapi.repository.LocalBookRepository;
 import com.dmsc.libraryserviceapi.service.authors.LocalAuthorsService;
+import com.dmsc.libraryserviceapi.service.hashing.IdentifierHashService;
 import com.dmsc.libraryserviceapi.service.language.LocalLanguageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

@@ -44,7 +44,7 @@ public class BookResponse {
             .authors(listAuthors)
             .languages(listLanguages)
             .publishYear(localBookEntity.getPublishYear())
-            .id(IdGeneratorUtil.build(BookSystemEnum.LOCAL, String.valueOf(localBookEntity.getId())))
+            .id(String.valueOf(localBookEntity.getId()))
             .title(localBookEntity.getTitle())
             .build();
     }
