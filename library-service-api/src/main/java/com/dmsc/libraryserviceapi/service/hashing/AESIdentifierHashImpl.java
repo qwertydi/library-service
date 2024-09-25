@@ -57,16 +57,16 @@ public class AESIdentifierHashImpl implements IdentifierHashService {
     private String encrypt(String plainText) {
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         byte[] encryptedBytes = cipher.doFinal(plainText.getBytes());
-        return Base64.getEncoder().encodeToString(encryptedBytes); // Encode to string
+        return Base64.getUrlEncoder().encodeToString(encryptedBytes); // Encode to string
     }
 
     @SneakyThrows
     private String decrypt(String encryptedText) {
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
-        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+        byte[] decryptedBytes = cipher.doFinal(Base64.getUrlDecoder().decode(encryptedText));
         return new String(decryptedBytes);
     }
-    
+
     @FunctionalInterface
     public interface GenerateSecretKey {
         SecretKey apply(String key);
