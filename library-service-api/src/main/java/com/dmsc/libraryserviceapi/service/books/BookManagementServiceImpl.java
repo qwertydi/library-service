@@ -31,7 +31,7 @@ public class BookManagementServiceImpl implements BookManagementService {
         this.remoteBookService = remoteBookService;
         this.identifierHashService = identifierHashService;
         this.hashBookId = (book, systemEnum) -> {
-            String hashedId = identifierHashService.hash(BookSystemEnum.LOCAL, book.getId());
+            String hashedId = identifierHashService.hash(systemEnum, book.getId());
             book.setId(hashedId);
             return book;
         };
@@ -45,7 +45,7 @@ public class BookManagementServiceImpl implements BookManagementService {
 
         notificationService.sendEmailNotification(bookResponse);
 
-        return bookResponse;
+        return hashBookId.apply(bookResponse, BookSystemEnum.LOCAL);
     }
 
     /**
@@ -56,7 +56,9 @@ public class BookManagementServiceImpl implements BookManagementService {
      */
     @Override
     public List<BookResponse> searchAllBooks() {
-        return localBookService.searchAllBooks();
+        return localBookService.searchAllBooks().stream()
+            .map(book -> hashBookId.apply(book, BookSystemEnum.LOCAL))
+            .toList();
     }
 
     @Override
@@ -69,16 +71,10 @@ public class BookManagementServiceImpl implements BookManagementService {
 
         switch (bookSystemEnum) {
             case LOCAL -> {
-                return localBookService.searchBookById(mappedId).map(x -> {
-                    x.setId(id);
-                    return x;
-                });
+                return localBookService.searchBookById(mappedId).map(book -> hashBookId.apply(book, BookSystemEnum.LOCAL));
             }
             case OPENLIBRARY -> {
-                return remoteBookService.searchBookById(mappedId).map(x -> {
-                    x.setId(id);
-                    return x;
-                });
+                return remoteBookService.searchBookById(mappedId).map(book -> hashBookId.apply(book, BookSystemEnum.OPENLIBRARY));
             }
             default -> throw new LibraryInvalidDataException("Third party not implemented", HttpStatus.NOT_IMPLEMENTED);
         }
