@@ -1,0 +1,11 @@
+alter table if exists local_book_entity_authors drop constraint if exists FK32of78ythrfhdc0c4aqlg6xro;
+alter table if exists local_book_entity_authors drop constraint if exists FKksidcw6r0eefqfqva4qthpxq8;
+alter table if exists local_book_entity_languages drop constraint if exists FKj7jk0j8qbof8ow25dm0pb4q8y;
+alter table if exists local_book_entity_languages drop constraint if exists FKjpcqwavk0cexisprtomfomms2;
+drop table if exists author_entity cascade;
+drop table if exists languages_entity cascade;
+drop table if exists local_book_entity cascade;
+drop table if exists local_book_entity_authors cascade;
+drop table if exists local_book_entity_languages cascade;
+drop sequence if exists author_entity_seq;
+drop sequence if exists languages_entity_seq;
