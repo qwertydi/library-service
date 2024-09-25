@@ -21,12 +21,9 @@ public class RemoteBookServiceImpl implements RemoteBookService {
 
     private final SearchApiSdk searchApiSdk;
     private final ModelMapper modelMapper;
-    private final IdentifierHashService identifierHashService;
 
-    public RemoteBookServiceImpl(SearchApiSdk searchApiSdk,
-                                 IdentifierHashService identifierHashService) {
+    public RemoteBookServiceImpl(SearchApiSdk searchApiSdk) {
         this.searchApiSdk = searchApiSdk;
-        this.identifierHashService = identifierHashService;
         this.modelMapper = new ModelMapper();
         PropertyMap<BookSdk, BookResponse> bookSdkToBookResponse = new PropertyMap<>() {
             @Override
@@ -34,6 +31,7 @@ public class RemoteBookServiceImpl implements RemoteBookService {
                 map().setAuthors(source.getAuthorName());
                 map().setLanguages(source.getLanguage());
                 map().setPublishYear(source.getFirstPublishYear());
+                map().setId(source.getKey());
             }
         };
         this.modelMapper.addMappings(bookSdkToBookResponse);
@@ -51,7 +49,7 @@ public class RemoteBookServiceImpl implements RemoteBookService {
 
         return searchSdkResponse == null ? Optional.empty() :
             searchSdkResponse.getDocs().stream()
-                .map(this::getBookResponse).findFirst();
+                .map(bookSdk -> modelMapper.map(bookSdk, BookResponse.class)).findFirst();
     }
 
     @Override
@@ -63,12 +61,6 @@ public class RemoteBookServiceImpl implements RemoteBookService {
         SearchSdkResponse searchSdkResponse = searchApiSdk.searchBooks(request);
         return searchSdkResponse.getDocs()
             .stream()
-            .map(this::getBookResponse).toList();
-    }
-
-    private BookResponse getBookResponse(BookSdk bookSdk) {
-        BookResponse bookResponse = modelMapper.map(bookSdk, BookResponse.class);
-        bookResponse.setId(identifierHashService.hash(BookSystemEnum.OPENLIBRARY, bookSdk.getKey()));
-        return bookResponse;
+            .map(bookSdk -> modelMapper.map(bookSdk, BookResponse.class)).toList();
     }
 }
